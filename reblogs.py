@@ -18,11 +18,20 @@ import progressbar
 # Obtain your OAuth token/secret from Tumblr's API Console and enter the details below.
 #   https://api.tumblr.com/console/calls/user/info
 
-client = pytumblr.TumblrRestClient(
-    '',  # consumer_key
-    '',  # consumer_secret
-    '',  # oauth_token
-    '')  # oauth_secret
+try:
+    filename = "config.txt"
+    f = open(filename,"r")
+    lines = f.readlines()
+
+    client = pytumblr.TumblrRestClient(
+        lines[0].rstrip(),  # consumer_key
+        lines[1].rstrip(),  # consumer_secret
+        lines[2].rstrip(),  # oauth_token
+        lines[3].rstrip()  # oauth_secret
+    )
+except:
+    print("Place a config.txt in the same directory as the script.  Populate it with your consumer key, consumer secret, oath token, and oath secret.  All of these should be on seperate lines.")
+    exit()
 
 http_error_codes = defaultdict(int)
 
