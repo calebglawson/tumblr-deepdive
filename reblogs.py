@@ -96,6 +96,8 @@ def getPosts(blog_name, max_posts):
         # Used to set limit when max_posts is not evenly divisible by 20
         limit = max_posts - offset
 
+        # If the limit is greater than 20, then we grab the next 20 and fetch more in the next iteration.
+        # If limit is zero, then all posts for a given blog are being fetched.
         if limit > 20 or limit <= 0:
             limit = 20
 
@@ -169,7 +171,7 @@ def printInOrder(dictionary, descending, limit):
     if len(dictionary) > 0:
         print ""
 
-        if limit == 0:
+        if limit == 0:  # If the limit is 0, then we will print all.
             limit = len(dictionary)
 
         count = 0
@@ -185,6 +187,7 @@ def printInOrder(dictionary, descending, limit):
             else:  # The item violates the threshold.
                 break
 
+            # If count is less than the limit, then we print.
             if (count <= limit):
                 print(i + " " + str(dictionary[i]))
                 count += 1
