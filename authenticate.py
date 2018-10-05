@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python2
 from __future__ import print_function
 from future import standard_library
 standard_library.install_aliases()
@@ -8,6 +8,14 @@ from os import path
 import pytumblr
 import json
 from requests_oauthlib import OAuth1Session
+
+
+def retrieve_consumer_keys():
+    print('Retrieve consumer key and consumer secret from http://www.tumblr.com/oauth/apps')
+    consumer_key = input('Paste the consumer key here: ')
+    consumer_secret = input('Paste the consumer secret here: ')
+    return consumer_key, consumer_secret
+
 
 if path.isfile("config.json"):
     print('Would you like to use your existing consumer key and secret?')
@@ -21,13 +29,9 @@ if path.isfile("config.json"):
         consumer_key = load["consumer_key"]
         consumer_secret = load["consumer_secret"]
     else:
-        print('Retrieve consumer key and consumer secret from http://www.tumblr.com/oauth/apps')
-        consumer_key = input('Paste the consumer key here: ')
-        consumer_secret = input('Paste the consumer secret here: ')
+        consumer_key, consumer_secret = retrieve_consumer_keys()
 else:
-    print('Retrieve consumer key and consumer secret from http://www.tumblr.com/oauth/apps')
-    consumer_key = input('Paste the consumer key here: ')
-    consumer_secret = input('Paste the consumer secret here: ')
+    consumer_key, consumer_secret = retrieve_consumer_keys()
 
 request_token_url = 'http://www.tumblr.com/oauth/request_token'
 authorize_url = 'http://www.tumblr.com/oauth/authorize'
@@ -68,6 +72,10 @@ tokens = json.dumps({
     'oauth_token_secret': oauth_tokens.get('oauth_token_secret')
 })
 
-f = open("config.json", "w")
-f.write(tokens)
-f.close
+try:
+    f = open("config.json", "w")
+    f.write(tokens)
+    f.close()
+    print ("Authentication successful. File config.json created in the working directory.")
+except:
+    print ("File config.json failed to write.")

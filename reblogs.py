@@ -7,7 +7,7 @@ import threading
 import argparse
 import progressbar
 
-# Please generate and enter your own API key/secret and OAuth token/secret below.
+# Please generate and enter your own API key/secret and OAuth token/secret.
 # You are using this script for your own purposes, and may have added your own customizations.
 # You agree to follow Tumblr's API License Agreement and ToS in utilizing any part of the following code.
 #   https://www.tumblr.com/policy/en/terms-of-service
@@ -15,24 +15,24 @@ import progressbar
 
 # Prior to your first run, register your own application with Tumblr's API to obtain a key.
 #   https://www.tumblr.com/oauth/apps
-# Obtain your OAuth token/secret from Tumblr's API Console and enter the details below.
-#   https://api.tumblr.com/console/calls/user/info
+#
+# Execute authenticate.py and follow the prompts to generate a config.json file.
 
 try:
     filename = "config.json"
     f = open(filename, "r")
     read = f.read()
+    f.close()
     load = json.loads(read)
+
     client = pytumblr.TumblrRestClient(
-        load["consumer_key"],  # consumer_key
-        load["consumer_secret"],  # consumer_secret
-        load["oauth_token"],  # oauth_token
-        load["oauth_token_secret"]  # oauth_secret
+        load["consumer_key"],
+        load["consumer_secret"],
+        load["oauth_token"],
+        load["oauth_token_secret"]
     )
-    f.close()
 except:
-    f.close()
-    print("Client could not be authenticated, please (re)authenticate by running authenticate.py")
+    print("Client could not be authenticated, please (re)authenticate by executing authenticate.py")
     exit()
 
 http_error_codes = defaultdict(int)
