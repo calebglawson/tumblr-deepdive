@@ -94,9 +94,9 @@ def returnOnlyExistingBlogs(dictionary):
 # CONTROL CENTER
 parser = argparse.ArgumentParser()
 parser.add_argument(
-    "infile", type=argparse.FileType('r'), help="file of blogs to check for existance")
+    "in_file", help="file of blogs to check for existance and print to screen")
 parser.add_argument(
-    "outfile", type=argparse.FileType('w'), help="output file of existing blogs")
+    "--out_file", help="optionally specify the output file of existing blogs")
 parser.add_argument(
     "--rate_limit", help="delay in milliseconds between requests", type=int)
 parser.add_argument(
@@ -106,11 +106,16 @@ parser.add_argument(
 args = parser.parse_args()
 
 try:
-    result = args.infile.readlines()
+    infile = open(args.in_file, "r")
 except:
-    args.infile.close()
-    print("File failed to read.")
-args.infile.close()
+    print("Input file failed to read.")
+    exit()
+
+result = infile.readlines()
+infile.close()
+
+if args.verbose:
+    print("Input file read successfully.")
 
 result = returnOnlyExistingBlogs(result)
 
@@ -119,10 +124,18 @@ if args.sort_off:
 else:
     result.sort()
 
-try:
+if args.out_file == None:  # If the output file is not specified, then print to screen.
     for blog in result:
-        args.outfile.write(blog + '\n')
-except:
-    args.outfile.close()
-    print("File failed to write.")
-args.outfile.close()
+        print(blog)
+else:
+    try:
+        outfile = open(args.out_file, "w")
+    except:
+        print("Output file failed to write.")
+        exit()
+
+    for blog in result:
+        outfile.write(blog + '\n')
+    if args.verbose:
+        print("Output file written successfully.")
+    outfile.close()
