@@ -7,6 +7,7 @@ import threading
 import argparse
 import progressbar
 from datetime import datetime
+from datetime import timedelta
 
 # Please generate and enter your own API key/secret and OAuth token/secret.
 # You are using this script for your own purposes, and may have added your own customizations.
@@ -40,11 +41,11 @@ fresh_blog_list = []
 
 
 class FreshBlogThread (threading.Thread):
-    def __init__(self, fresh_blog_list, blog_name, cutoff_date, delay):
+    def __init__(self, fresh_blog_list, blog_name, days_ago, delay):
         threading.Thread.__init__(self)
         self.fresh_blog_list = fresh_blog_list
         self.blog_name = blog_name
-        self.cutoff_date = cutoff_date
+        self.days_ago = days_ago
         self.delay = delay
 
     def run(self):
@@ -59,13 +60,13 @@ class FreshBlogThread (threading.Thread):
             for post in response['posts']:
                 post_date_time = datetime.strptime(
                     post['date'], '%Y-%m-%d %H:%M:%S %Z')
-                if post_date_time >= self.cutoff_date:
+                if post_date_time >= self.days_ago:
                     self.fresh_blog_list.append(self.blog_name)
-        except:
+        except:  # If the post date is too old or the blog does not exist.
             pass
 
 
-def freshBlogs(blog_names, cutoff_date):
+def freshBlogs(blog_names, days_ago):
     threads = []
     iteration = 1
     for blog in blog_names:
@@ -76,7 +77,7 @@ def freshBlogs(blog_names, cutoff_date):
             delay = 0
 
         thread = FreshBlogThread(fresh_blog_list,
-                                 blog, cutoff_date, delay)
+                                 blog, days_ago, delay)
         threads += [thread]
         thread.start()
 
@@ -100,6 +101,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument(
     "in_file", help="list of blog names to check for freshness")
 parser.add_argument(
+    "days", help="add days to freshness date", type=int)
+parser.add_argument(
     "--out_file", help="list of fresh blogs")
 parser.add_argument(
     "--rate_limit", help="delay in milliseconds between requests", type=int)
@@ -109,6 +112,10 @@ parser.add_argument(
     "--verbose", help="indicate progress", action="store_true")
 args = parser.parse_args()
 
+if args.days <= 0:
+    print("Input an amount of days greater than zero.")
+    exit()
+
 try:
     infile = open(args.in_file, "r")
 except:
@@ -116,14 +123,14 @@ except:
     exit()
 
 result = infile.readlines()
+# If we close the file now, we can write to the same file later.
 infile.close()
 
 if args.verbose:
     print("Input file read successfully.")
 
-cutoff_datetime = datetime.strptime(
-    "2018-10-01 00:00:00 GMT", '%Y-%m-%d %H:%M:%S %Z')
-result = freshBlogs(result, cutoff_datetime)
+days_ago = datetime.now() - timedelta(days=args.days)
+result = freshBlogs(result, days_ago)
 
 if args.sort_off:
     pass
