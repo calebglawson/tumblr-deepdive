@@ -71,21 +71,6 @@ class GetPostsThread (threading.Thread):
                 http_error_codes[error] = 1
 
 
-class ReturnOnlyExistingBlogsThread (threading.Thread):
-    def __init__(self, results, blog_name, delay):
-        threading.Thread.__init__(self)
-        self.results = results
-        self.blog_name = blog_name
-        self.delay = delay
-
-    def run(self):
-
-        if self.delay > 0:
-            sleep(self.delay)
-
-        self.results.append(client.blog_info(self.blog_name + '.tumblr.com'))
-
-
 def getPosts(blog_name, max_posts):
     reblogged_from_list = defaultdict(int)
     threads = []
@@ -127,49 +112,16 @@ def getPosts(blog_name, max_posts):
     return reblogged_from_list
 
 
-def returnOnlyExistingBlogs(dictionary):
+def printInOrder(dictionary, descending, limit, outfile):
 
-    threads = []
-    results = []
-    clean_dict = defaultdict(int)
-    iteration = 1
+    if outfile != None:
+        try:
+            outfile = open(args.out_file, "w")
+        except:
+            print("Output file failed to write.")
+            exit()
 
     if len(dictionary) > 0:
-        for blog_name in dictionary:
-
-            if args.rate_limit != None:
-                delay = (args.rate_limit * iteration) / 1000.0
-            else:
-                delay = 0
-
-            thread = ReturnOnlyExistingBlogsThread(results, blog_name, delay)
-            threads += [thread]
-            thread.start()
-
-            iteration += 1
-
-        if args.verbose:
-            print "Checking existance of blogs..."
-            bar = progressbar.ProgressBar()
-            for t in bar(threads):
-                t.join()
-        else:
-            for t in threads:
-                t.join()
-
-        for result in results:
-            if result.get('meta') and result['meta']['status'] != 200:
-                pass
-            else:
-                blog_name = result['blog']['name']
-                clean_dict[blog_name] = dictionary[blog_name]
-
-    return clean_dict
-
-
-def printInOrder(dictionary, descending, limit):
-    if len(dictionary) > 0:
-        print ""
 
         if limit == 0:  # If the limit is 0, then we will print all.
             limit = len(dictionary)
@@ -190,11 +142,16 @@ def printInOrder(dictionary, descending, limit):
             # If count is less than the limit, then we print.
             if (count <= limit):
                 print(i + " " + str(dictionary[i]))
+                if outfile != None:
+                    outfile.write(i + '\n')
                 count += 1
             else:
                 break
 
-        print ""
+        if outfile != None:
+            outfile.close()
+            if args.verbose:
+                print("\nOutput file written successfully.")
 
 
 # CONTROL CENTER
@@ -204,13 +161,13 @@ parser.add_argument(
 parser.add_argument(
     "max_posts", help="the maximum amount of posts to take into consideration", type=int)
 parser.add_argument(
+    "--out_file", help="output list of blogs to file")
+parser.add_argument(
     "--rate_limit", help="delay in milliseconds between requests", type=int)
 parser.add_argument(
     "--max_print", help="maximum blogs to print", type=int)
 parser.add_argument(
     "--threshold", help="blogs must have a equal or greater than this number",  type=int)
-parser.add_argument(
-    "--existing", help="only print existing blogs", action="store_true")
 parser.add_argument(
     "--verbose", help="indicate progress", action="store_true")
 parser.add_argument(
@@ -219,12 +176,9 @@ args = parser.parse_args()
 
 result = getPosts(args.blog_name, args.max_posts)
 
-if args.existing:
-    result = returnOnlyExistingBlogs(result)
-
 if len(http_error_codes) > 0:
     print "\nHTTP Error Codes Occured: "
-    printInOrder(http_error_codes, True, 0)
+    printInOrder(http_error_codes, True, 0, args.out_file)
 
 printInOrder(result, False if args.ascending == True else True,
-             0 if args.max_print == None else args.max_print)
+             0 if args.max_print == None else args.max_print, args.out_file)

@@ -37,13 +37,13 @@ except:
     print("Client could not be authenticated, please (re)authenticate by executing authenticate.py")
     exit()
 
-fresh_blog_list = []
+recent_blog_list = []
 
 
-class FreshBlogThread (threading.Thread):
-    def __init__(self, fresh_blog_list, blog_name, days_ago, delay):
+class RecentBlogThread (threading.Thread):
+    def __init__(self, recent_blog_list, blog_name, days_ago, delay):
         threading.Thread.__init__(self)
-        self.fresh_blog_list = fresh_blog_list
+        self.recent_blog_list = recent_blog_list
         self.blog_name = blog_name
         self.days_ago = days_ago
         self.delay = delay
@@ -61,12 +61,12 @@ class FreshBlogThread (threading.Thread):
                 post_date_time = datetime.strptime(
                     post['date'], '%Y-%m-%d %H:%M:%S %Z')
                 if post_date_time >= self.days_ago:
-                    self.fresh_blog_list.append(self.blog_name)
+                    self.recent_blog_list.append(self.blog_name)
         except:  # If the post date is too old or the blog does not exist.
             pass
 
 
-def freshBlogs(blog_names, days_ago):
+def recentBlogs(blog_names, days_ago):
     threads = []
     iteration = 1
     for blog in blog_names:
@@ -76,8 +76,8 @@ def freshBlogs(blog_names, days_ago):
         else:
             delay = 0
 
-        thread = FreshBlogThread(fresh_blog_list,
-                                 blog, days_ago, delay)
+        thread = RecentBlogThread(recent_blog_list,
+                                  blog, days_ago, delay)
         threads += [thread]
         thread.start()
 
@@ -93,17 +93,17 @@ def freshBlogs(blog_names, days_ago):
         for t in threads:
             t.join()
 
-    return fresh_blog_list
+    return recent_blog_list
 
 
 # CONTROL CENTER
 parser = argparse.ArgumentParser()
 parser.add_argument(
-    "in_file", help="list of blog names to check for freshness")
+    "in_file", help="list of blog names to check for recentness")
 parser.add_argument(
-    "days", help="add days to freshness date", type=int)
+    "days", help="add days to recentness date", type=int)
 parser.add_argument(
-    "--out_file", help="list of fresh blogs")
+    "--out_file", help="list of recent blogs")
 parser.add_argument(
     "--rate_limit", help="delay in milliseconds between requests", type=int)
 parser.add_argument(
@@ -130,7 +130,7 @@ if args.verbose:
     print("Input file read successfully.")
 
 days_ago = datetime.now() - timedelta(days=args.days)
-result = freshBlogs(result, days_ago)
+result = recentBlogs(result, days_ago)
 
 if args.sort_off:
     pass
