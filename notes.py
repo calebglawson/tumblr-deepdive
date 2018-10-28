@@ -3,7 +3,6 @@ from collections import defaultdict
 import pytumblr
 import json
 import argparse
-import progressbar
 from datetime import datetime
 from datetime import timedelta
 import common

@@ -1,11 +1,11 @@
 #!/usr/bin/python2
 from collections import defaultdict
 from time import sleep
+from tqdm import tqdm
 import pytumblr
 import json
 import threading
 import argparse
-import progressbar
 import common
 
 # Please generate and enter your own API key/secret and OAuth token/secret.
@@ -59,8 +59,8 @@ def returnOnlyExistingBlogs(dictionary):
 
         if args.verbose:
             print "Checking existance of blogs..."
-            bar = progressbar.ProgressBar()
-            for t in bar(threads):
+
+            for t in tqdm(threads):
                 t.join()
         else:
             for t in threads:

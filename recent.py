@@ -5,7 +5,7 @@ import pytumblr
 import json
 import threading
 import argparse
-import progressbar
+from tqdm import tqdm
 from datetime import datetime
 from datetime import timedelta
 import common
@@ -70,8 +70,7 @@ def recentBlogs(blog_names, days_ago):
     if args.verbose:
         print "Retrieving posts..."
 
-        bar = progressbar.ProgressBar()
-        for t in bar(threads):
+        for t in tqdm(threads):
             t.join()
     else:
         for t in threads:

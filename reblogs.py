@@ -5,7 +5,7 @@ import pytumblr
 import json
 import threading
 import argparse
-import progressbar
+from tqdm import tqdm
 import common
 
 # Please generate and enter your own API key/secret and OAuth token/secret.
@@ -86,8 +86,7 @@ def GetReblogs(blog_name, max_posts):
     if args.verbose:
         print "Retrieving posts..."
 
-        bar = progressbar.ProgressBar()
-        for t in bar(threads):
+        for t in tqdm(threads):
             t.join()
     else:
         for t in threads:

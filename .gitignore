@@ -2,3 +2,4 @@ config.json
 input.txt
 output.txt
 .vscode/
+*.pyc
