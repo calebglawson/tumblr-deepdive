@@ -8,17 +8,6 @@ import threading
 import argparse
 import common
 
-# Please generate and enter your own API key/secret and OAuth token/secret.
-# You are using this script for your own purposes, and may have added your own customizations.
-# You agree to follow Tumblr's API License Agreement and ToS in utilizing any part of the following code.
-#   https://www.tumblr.com/policy/en/terms-of-service
-#   https://www.tumblr.com/docs/en/api_agreement
-
-# Prior to your first run, register your own application with Tumblr's API to obtain a key.
-#   https://www.tumblr.com/oauth/apps
-#
-# Execute authenticate.py and follow the prompts to generate a config.json file.
-
 
 class ReturnOnlyExistingBlogsThread (threading.Thread):
     def __init__(self, results, blog_name, delay):
