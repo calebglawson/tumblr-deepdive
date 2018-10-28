@@ -6,6 +6,7 @@ import json
 import threading
 import argparse
 import progressbar
+import common
 
 # Please generate and enter your own API key/secret and OAuth token/secret.
 # You are using this script for your own purposes, and may have added your own customizations.
@@ -17,23 +18,6 @@ import progressbar
 #   https://www.tumblr.com/oauth/apps
 #
 # Execute authenticate.py and follow the prompts to generate a config.json file.
-
-try:
-    filename = "config.json"
-    f = open(filename, "r")
-    read = f.read()
-    f.close()
-    load = json.loads(read)
-
-    client = pytumblr.TumblrRestClient(
-        load["consumer_key"],
-        load["consumer_secret"],
-        load["oauth_token"],
-        load["oauth_token_secret"]
-    )
-except:
-    print("Client could not be authenticated, please (re)authenticate by executing authenticate.py")
-    exit()
 
 http_error_codes = defaultdict(int)
 
@@ -52,8 +36,8 @@ class GetReblogsThread (threading.Thread):
         if self.delay > 0:
             sleep(self.delay)
 
-        response = client.posts(self.blog_name + '.tumblr.com',
-                                reblog_info=True, offset=self.offset, limit=self.limit)
+        response = common.client.posts(self.blog_name + '.tumblr.com',
+                                       reblog_info=True, offset=self.offset, limit=self.limit)
 
         try:
             for post in response['posts']:

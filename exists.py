@@ -6,6 +6,7 @@ import json
 import threading
 import argparse
 import progressbar
+import common
 
 # Please generate and enter your own API key/secret and OAuth token/secret.
 # You are using this script for your own purposes, and may have added your own customizations.
@@ -17,23 +18,6 @@ import progressbar
 #   https://www.tumblr.com/oauth/apps
 #
 # Execute authenticate.py and follow the prompts to generate a config.json file.
-
-try:
-    filename = "config.json"
-    f = open(filename, "r")
-    read = f.read()
-    f.close()
-    load = json.loads(read)
-
-    client = pytumblr.TumblrRestClient(
-        load["consumer_key"],
-        load["consumer_secret"],
-        load["oauth_token"],
-        load["oauth_token_secret"]
-    )
-except:
-    print("Client could not be authenticated, please (re)authenticate by executing authenticate.py")
-    exit()
 
 
 class ReturnOnlyExistingBlogsThread (threading.Thread):
@@ -48,7 +32,8 @@ class ReturnOnlyExistingBlogsThread (threading.Thread):
         if self.delay > 0:
             sleep(self.delay)
 
-        self.results.append(client.blog_info(self.blog_name + '.tumblr.com'))
+        self.results.append(common.client.blog_info(
+            self.blog_name + '.tumblr.com'))
 
 
 def returnOnlyExistingBlogs(dictionary):
@@ -96,41 +81,6 @@ def returnOnlyExistingBlogs(dictionary):
     return clean_dict
 
 
-def readInFile(file_name):
-    try:
-        infile = open(file_name, "r")
-    except:
-        print("Input file failed to read.")
-        exit()
-
-    blogs = infile.readlines()
-    # If we close the file now, we can write to the same file later.
-    infile.close()
-
-    if args.verbose:
-        print("Input file read successfully.")
-
-    return blogs
-
-
-def displayResults(result):
-    if args.out_file == None:  # If the output file is not specified, then print to screen.
-        for blog in result:
-            print(blog.strip("\n"))
-    else:
-        try:
-            outfile = open(args.out_file, "w")
-        except:
-            print("Output file failed to write.")
-            exit()
-
-        for blog in result:
-            outfile.write(blog.strip("\n") + '\n')
-        if args.verbose:
-            print("Output file written successfully.")
-        outfile.close()
-
-
 # CONTROL CENTER
 parser = argparse.ArgumentParser()
 parser.add_argument(
@@ -145,6 +95,6 @@ parser.add_argument(
     "--sort_off", help="turn off sorting", action="store_true")
 args = parser.parse_args()
 
-blog_names = readInFile(args.in_file)
+blog_names = common.readInFile(args.in_file, args.verbose)
 results = returnOnlyExistingBlogs(blog_names)
-displayResults(results)
+common.displayResults(results, args.out_file, args.verbose)

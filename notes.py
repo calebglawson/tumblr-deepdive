@@ -6,6 +6,7 @@ import argparse
 import progressbar
 from datetime import datetime
 from datetime import timedelta
+import common
 
 # Please generate and enter your own API key/secret and OAuth token/secret.
 # You are using this script for your own purposes, and may have added your own customizations.
@@ -18,27 +19,11 @@ from datetime import timedelta
 #
 # Execute authenticate.py and follow the prompts to generate a config.json file.
 
-try:
-    filename = "config.json"
-    f = open(filename, "r")
-    read = f.read()
-    f.close()
-    load = json.loads(read)
-
-    client = pytumblr.TumblrRestClient(
-        load["consumer_key"],
-        load["consumer_secret"],
-        load["oauth_token"],
-        load["oauth_token_secret"]
-    )
-except:
-    print("Client could not be authenticated, please (re)authenticate by executing authenticate.py")
-    exit()
-
 
 def getNotes(blog_url, post_id):
     result = []
-    response = client.posts(blog_url, id=post_id, notes_info=True, limit=1)
+    response = common.client.posts(
+        blog_url, id=post_id, notes_info=True, limit=1)
     try:
         for post in response['posts']:
             for note in post['notes']:
@@ -55,24 +40,6 @@ def getNotes(blog_url, post_id):
         result.sort()
 
     return result
-
-
-def displayResults(result):
-    if args.out_file == None:  # If the output file is not specified, then print to screen.
-        for blog in result:
-            print(blog.strip("\n"))
-    else:
-        try:
-            outfile = open(args.out_file, "w")
-        except:
-            print("Output file failed to write.")
-            exit()
-
-        for blog in result:
-            outfile.write(blog.strip("\n") + '\n')
-        if args.verbose:
-            print("Output file written successfully.")
-        outfile.close()
 
 
 def parsePostUrl(post_url):
@@ -108,4 +75,4 @@ args = parser.parse_args()
 
 blog_name, post_id = parsePostUrl(args.post_url)
 result = getNotes(blog_name + ".tumblr.com", post_id)
-displayResults(result)
+common.displayResults(result, args.out_file, args.verbose)
