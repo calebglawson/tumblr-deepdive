@@ -1,12 +1,12 @@
 #!/usr/bin/python2
 from collections import defaultdict
 from time import sleep
-import pytumblr
-import json
-import threading
-import argparse
 from tqdm import tqdm
+import argparse
 import common
+import json
+import pytumblr
+import threading
 
 http_error_codes = defaultdict(int)
 

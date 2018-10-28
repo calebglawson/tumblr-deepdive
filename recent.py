@@ -1,14 +1,14 @@
 #!/usr/bin/python2
 from collections import defaultdict
-from time import sleep
-import pytumblr
-import json
-import threading
-import argparse
-from tqdm import tqdm
 from datetime import datetime
 from datetime import timedelta
+from time import sleep
+from tqdm import tqdm
+import argparse
 import common
+import json
+import pytumblr
+import threading
 
 recent_blog_list = []
 

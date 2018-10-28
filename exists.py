@@ -2,11 +2,11 @@
 from collections import defaultdict
 from time import sleep
 from tqdm import tqdm
-import pytumblr
-import json
-import threading
 import argparse
 import common
+import json
+import pytumblr
+import threading
 
 
 class ReturnOnlyExistingBlogsThread (threading.Thread):

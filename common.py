@@ -1,6 +1,6 @@
 #!/usr/bin/python2
-import pytumblr
 import json
+import pytumblr
 
 # Please generate and enter your own API key/secret and OAuth token/secret.
 # You are using this script for your own purposes, and may have added your own customizations.

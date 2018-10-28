@@ -1,13 +1,12 @@
 #!/usr/bin/python2
-from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
 from builtins import input
+from future import standard_library
 from os import path
-
-import pytumblr
-import json
 from requests_oauthlib import OAuth1Session
+from __future__ import print_function
+import json
+import pytumblr
+standard_library.install_aliases()
 
 
 def retrieve_consumer_keys():

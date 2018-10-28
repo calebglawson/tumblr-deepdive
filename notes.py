@@ -1,11 +1,11 @@
 #!/usr/bin/python2
 from collections import defaultdict
-import pytumblr
-import json
-import argparse
 from datetime import datetime
 from datetime import timedelta
+import argparse
 import common
+import json
+import pytumblr
 
 
 def getNotes(blog_url, post_id):
