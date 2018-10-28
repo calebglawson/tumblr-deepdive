@@ -77,9 +77,9 @@ parser.add_argument(
 parser.add_argument(
     "--rate_limit", help="delay in milliseconds between requests", type=int)
 parser.add_argument(
-    "--verbose", help="indicate progress", action="store_true")
-parser.add_argument(
     "--sort_off", help="turn off sorting", action="store_true")
+parser.add_argument(
+    "--verbose", help="indicate progress", action="store_true")
 args = parser.parse_args()
 client = common.initiateClient()
 blog_names = common.readInFile(args.in_file, args.verbose)

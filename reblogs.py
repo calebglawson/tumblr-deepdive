@@ -131,17 +131,18 @@ parser.add_argument(
 parser.add_argument(
     "max_posts", help="the maximum amount of posts to take into consideration", type=int)
 parser.add_argument(
+    "--ascending", help="print blogs in ascending order", action="store_true")
+parser.add_argument(
+    "--max_print", help="maximum blogs to print", type=int)
+parser.add_argument(
     "--out_file", help="output list of blogs to file")
 parser.add_argument(
     "--rate_limit", help="delay in milliseconds between requests", type=int)
 parser.add_argument(
-    "--max_print", help="maximum blogs to print", type=int)
-parser.add_argument(
     "--threshold", help="blogs must have a equal or greater than this number",  type=int)
 parser.add_argument(
     "--verbose", help="indicate progress", action="store_true")
-parser.add_argument(
-    "--ascending", help="print blogs in ascending order", action="store_true")
+
 args = parser.parse_args()
 client = common.initiateClient()
 result = GetReblogs(args.blog_name, args.max_posts)

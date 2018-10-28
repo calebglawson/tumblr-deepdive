@@ -2,6 +2,8 @@
 import json
 import pytumblr
 
+# Files common to many of the scripts in this project.
+
 # Please generate and enter your own API key/secret and OAuth token/secret.
 # You are using this script for your own purposes, and may have added your own customizations.
 # You agree to follow Tumblr's API License Agreement and ToS in utilizing any part of the following code.
