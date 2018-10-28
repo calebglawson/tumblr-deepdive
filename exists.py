@@ -88,7 +88,47 @@ def returnOnlyExistingBlogs(dictionary):
                 blog_name = result['blog']['name']
                 clean_dict.append(blog_name)
 
+    if args.sort_off:
+        pass
+    else:
+        clean_dict.sort()
+
     return clean_dict
+
+
+def readInFile(file_name):
+    try:
+        infile = open(file_name, "r")
+    except:
+        print("Input file failed to read.")
+        exit()
+
+    blogs = infile.readlines()
+    # If we close the file now, we can write to the same file later.
+    infile.close()
+
+    if args.verbose:
+        print("Input file read successfully.")
+
+    return blogs
+
+
+def displayResults(result):
+    if args.out_file == None:  # If the output file is not specified, then print to screen.
+        for blog in result:
+            print(blog.strip("\n"))
+    else:
+        try:
+            outfile = open(args.out_file, "w")
+        except:
+            print("Output file failed to write.")
+            exit()
+
+        for blog in result:
+            outfile.write(blog.strip("\n") + '\n')
+        if args.verbose:
+            print("Output file written successfully.")
+        outfile.close()
 
 
 # CONTROL CENTER
@@ -105,37 +145,6 @@ parser.add_argument(
     "--sort_off", help="turn off sorting", action="store_true")
 args = parser.parse_args()
 
-try:
-    infile = open(args.in_file, "r")
-except:
-    print("Input file failed to read.")
-    exit()
-
-result = infile.readlines()
-infile.close()
-
-if args.verbose:
-    print("Input file read successfully.")
-
-result = returnOnlyExistingBlogs(result)
-
-if args.sort_off:
-    pass
-else:
-    result.sort()
-
-if args.out_file == None:  # If the output file is not specified, then print to screen.
-    for blog in result:
-        print(blog)
-else:
-    try:
-        outfile = open(args.out_file, "w")
-    except:
-        print("Output file failed to write.")
-        exit()
-
-    for blog in result:
-        outfile.write(blog + '\n')
-    if args.verbose:
-        print("Output file written successfully.")
-    outfile.close()
+blog_names = readInFile(args.in_file)
+results = returnOnlyExistingBlogs(blog_names)
+displayResults(results)

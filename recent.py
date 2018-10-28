@@ -93,7 +93,47 @@ def recentBlogs(blog_names, days_ago):
         for t in threads:
             t.join()
 
+    if args.sort_off:
+        pass
+    else:
+        recent_blog_list.sort()
+
     return recent_blog_list
+
+
+def readInFile(file_name):
+    try:
+        infile = open(file_name, "r")
+    except:
+        print("Input file failed to read.")
+        exit()
+
+    blogs = infile.readlines()
+    # If we close the file now, we can write to the same file later.
+    infile.close()
+
+    if args.verbose:
+        print("Input file read successfully.")
+
+    return blogs
+
+
+def displayResults(result):
+    if args.out_file == None:  # If the output file is not specified, then print to screen.
+        for blog in result:
+            print(blog.strip("\n"))
+    else:
+        try:
+            outfile = open(args.out_file, "w")
+        except:
+            print("Output file failed to write.")
+            exit()
+
+        for blog in result:
+            outfile.write(blog.strip("\n") + '\n')
+        if args.verbose:
+            print("Output file written successfully.")
+        outfile.close()
 
 
 # CONTROL CENTER
@@ -101,7 +141,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument(
     "in_file", help="list of blog names to check for recentness")
 parser.add_argument(
-    "days", help="add days to recentness date", type=int)
+    "days_ago", help="add days to recentness date", type=int)
 parser.add_argument(
     "--out_file", help="list of recent blogs")
 parser.add_argument(
@@ -112,43 +152,11 @@ parser.add_argument(
     "--verbose", help="indicate progress", action="store_true")
 args = parser.parse_args()
 
-if args.days <= 0:
+if args.days_ago <= 0:
     print("Input an amount of days greater than zero.")
     exit()
 
-try:
-    infile = open(args.in_file, "r")
-except:
-    print("Input file failed to read.")
-    exit()
-
-result = infile.readlines()
-# If we close the file now, we can write to the same file later.
-infile.close()
-
-if args.verbose:
-    print("Input file read successfully.")
-
-days_ago = datetime.now() - timedelta(days=args.days)
-result = recentBlogs(result, days_ago)
-
-if args.sort_off:
-    pass
-else:
-    result.sort()
-
-if args.out_file == None:  # If the output file is not specified, then print to screen.
-    for blog in result:
-        print(blog.strip("\n"))
-else:
-    try:
-        outfile = open(args.out_file, "w")
-    except:
-        print("Output file failed to write.")
-        exit()
-
-    for blog in result:
-        outfile.write(blog.strip("\n") + '\n')
-    if args.verbose:
-        print("Output file written successfully.")
-    outfile.close()
+blog_names = readInFile(args.in_file)
+days_ago = datetime.now() - timedelta(days=args.days_ago)
+results = recentBlogs(blog_names, days_ago)
+displayResults(results)

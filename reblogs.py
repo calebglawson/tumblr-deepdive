@@ -38,7 +38,7 @@ except:
 http_error_codes = defaultdict(int)
 
 
-class GetPostsThread (threading.Thread):
+class GetReblogsThread (threading.Thread):
     def __init__(self, reblogged_from_list, blog_name, offset, limit, delay):
         threading.Thread.__init__(self)
         self.reblogged_from_list = reblogged_from_list
@@ -53,7 +53,7 @@ class GetPostsThread (threading.Thread):
             sleep(self.delay)
 
         response = client.posts(self.blog_name + '.tumblr.com',
-                                reblog_info=True, notes_info=True, offset=self.offset, limit=self.limit)
+                                reblog_info=True, offset=self.offset, limit=self.limit)
 
         try:
             for post in response['posts']:
@@ -71,7 +71,7 @@ class GetPostsThread (threading.Thread):
                 http_error_codes[error] = 1
 
 
-def getPosts(blog_name, max_posts):
+def GetReblogs(blog_name, max_posts):
     reblogged_from_list = defaultdict(int)
     threads = []
     offset = 0
@@ -91,8 +91,8 @@ def getPosts(blog_name, max_posts):
         else:
             delay = 0
 
-        thread = GetPostsThread(reblogged_from_list,
-                                blog_name, offset, limit, delay)
+        thread = GetReblogsThread(reblogged_from_list,
+                                  blog_name, offset, limit, delay)
         threads += [thread]
         thread.start()
 
@@ -174,7 +174,7 @@ parser.add_argument(
     "--ascending", help="print blogs in ascending order", action="store_true")
 args = parser.parse_args()
 
-result = getPosts(args.blog_name, args.max_posts)
+result = GetReblogs(args.blog_name, args.max_posts)
 
 if len(http_error_codes) > 0:
     print "\nHTTP Error Codes Occured: "
