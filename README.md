@@ -1,5 +1,4 @@
 # Tumblr Deep Dive
-
 A suite of tools that makes discovering similar blogs easier!
 
 ## authenticate.py

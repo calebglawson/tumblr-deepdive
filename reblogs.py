@@ -4,8 +4,6 @@ from time import sleep
 from tqdm import tqdm
 import argparse
 import common
-import json
-import pytumblr
 import threading
 
 http_error_codes = defaultdict(int)
