@@ -2,22 +2,25 @@
 import pytumblr
 import json
 
-try:
-    filename = "config.json"
-    f = open(filename, "r")
-    read = f.read()
-    f.close()
-    load = json.loads(read)
 
-    client = pytumblr.TumblrRestClient(
-        load["consumer_key"],
-        load["consumer_secret"],
-        load["oauth_token"],
-        load["oauth_token_secret"]
-    )
-except:
-    print("Client could not be authenticated, please (re)authenticate by executing authenticate.py")
-    exit()
+def initiateClient():
+    try:
+        filename = "config.json"
+        f = open(filename, "r")
+        read = f.read()
+        f.close()
+        load = json.loads(read)
+
+        client = pytumblr.TumblrRestClient(
+            load["consumer_key"],
+            load["consumer_secret"],
+            load["oauth_token"],
+            load["oauth_token_secret"]
+        )
+        return client
+    except:
+        print("Client could not be authenticated, please (re)authenticate by executing authenticate.py")
+        exit()
 
 
 def readInFile(file_name, verbose):

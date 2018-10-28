@@ -32,7 +32,7 @@ class ReturnOnlyExistingBlogsThread (threading.Thread):
         if self.delay > 0:
             sleep(self.delay)
 
-        self.results.append(common.client.blog_info(
+        self.results.append(client.blog_info(
             self.blog_name + '.tumblr.com'))
 
 
@@ -94,7 +94,7 @@ parser.add_argument(
 parser.add_argument(
     "--sort_off", help="turn off sorting", action="store_true")
 args = parser.parse_args()
-
+client = common.initiateClient()
 blog_names = common.readInFile(args.in_file, args.verbose)
 results = returnOnlyExistingBlogs(blog_names)
 common.displayResults(results, args.out_file, args.verbose)

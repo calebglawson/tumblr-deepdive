@@ -36,8 +36,8 @@ class GetReblogsThread (threading.Thread):
         if self.delay > 0:
             sleep(self.delay)
 
-        response = common.client.posts(self.blog_name + '.tumblr.com',
-                                       reblog_info=True, offset=self.offset, limit=self.limit)
+        response = client.posts(self.blog_name + '.tumblr.com',
+                                reblog_info=True, offset=self.offset, limit=self.limit)
 
         try:
             for post in response['posts']:
@@ -156,7 +156,7 @@ parser.add_argument(
 parser.add_argument(
     "--ascending", help="print blogs in ascending order", action="store_true")
 args = parser.parse_args()
-
+client = common.initiateClient()
 result = GetReblogs(args.blog_name, args.max_posts)
 
 if len(http_error_codes) > 0:

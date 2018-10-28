@@ -21,7 +21,7 @@ import common
 
 def getNotes(blog_url, post_id):
     result = []
-    response = common.client.posts(
+    response = client.posts(
         blog_url, id=post_id, notes_info=True, limit=1)
     try:
         for post in response['posts']:
@@ -71,7 +71,7 @@ parser.add_argument(
 parser.add_argument(
     "--sort_off", help="turn off alphabetic sorting", action="store_true")
 args = parser.parse_args()
-
+client = common.initiateClient()
 blog_name, post_id = parsePostUrl(args.post_url)
 result = getNotes(blog_name + ".tumblr.com", post_id)
 common.displayResults(result, args.out_file, args.verbose)

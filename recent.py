@@ -37,8 +37,8 @@ class RecentBlogThread (threading.Thread):
         if self.delay > 0:
             sleep(self.delay)
 
-        response = common.client.posts(self.blog_name + '.tumblr.com',
-                                       reblog_info=True, notes_info=True, limit=1)
+        response = client.posts(self.blog_name + '.tumblr.com',
+                                reblog_info=True, notes_info=True, limit=1)
 
         try:
             for post in response['posts']:
@@ -104,6 +104,7 @@ if args.days_ago <= 0:
     print("Input an amount of days greater than zero.")
     exit()
 
+client = common.initiateClient()
 blog_names = common.readInFile(args.in_file, args.verbose)
 days_ago = datetime.now() - timedelta(days=args.days_ago)
 results = recentBlogs(blog_names, days_ago)
